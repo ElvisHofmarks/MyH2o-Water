@@ -1,0 +1,89 @@
+import React from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Platform,
+} from 'react-native';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
+import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+import {COLORS, FONTS} from '../config/Constants';
+
+interface CustomTabProps extends BottomTabBarProps {}
+
+const CustomTab: React.FC<CustomTabProps> = ({state, navigation}) => {
+  return (
+    <View style={{backgroundColor: COLORS.black}}>
+      <View style={styles.container}>
+        <View style={styles.mainView}>
+          {state.routes.map((route, index) => {
+            const isFocused = state.index === index;
+            const onPress = () => {
+              if (!isFocused) {
+                navigation.navigate(route.name);
+              }
+            };
+
+            return (
+              <TouchableOpacity
+                onPress={onPress}
+                activeOpacity={1}
+                key={route.name}>
+                <View style={styles.iconContainer}>
+                  <Text
+                    style={[
+                      styles.tabText,
+                      {
+                        color: isFocused ? COLORS.black : 'rgba(0, 0, 0, 0.5)',
+                      },
+                    ]}>
+                    {route.name === 'Dashboard'
+                      ? 'HOME'
+                      : route.name === 'AddDrink'
+                      ? 'ADD DRINK'
+                      : 'SETTINGS'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default CustomTab;
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: COLORS.black,
+    paddingBottom: Platform.OS === 'ios' ? (Platform.constants?.systemName === "iPadOS" ? wp(2) : wp(10)) : wp(10),
+  },
+  mainView: {
+    flexDirection: 'row',
+    marginHorizontal: wp(5),
+    borderRadius: wp(1),
+    backgroundColor: COLORS.white,
+    paddingVertical: wp(3),
+    justifyContent: 'space-between',
+    paddingHorizontal: wp(5),
+  },
+  tabButton: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  iconContainer: {
+    alignItems: 'center',
+  },
+  tabText: {
+    fontWeight: '400',
+    fontSize: 35,
+    fontFamily: FONTS.JostRegular,
+  },
+});
