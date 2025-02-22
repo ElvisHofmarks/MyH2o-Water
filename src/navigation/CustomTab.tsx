@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   Platform,
+  Image,
 } from 'react-native';
 import {
   heightPercentageToDP as hp,
@@ -12,16 +13,17 @@ import {
 } from 'react-native-responsive-screen';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {COLORS, FONTS} from '../config/Constants';
-
+import ImagePath from '../assets/ImagePath';
 interface CustomTabProps extends BottomTabBarProps {}
 
 const CustomTab: React.FC<CustomTabProps> = ({state, navigation}) => {
   return (
-    <View style={{backgroundColor: COLORS.black}}>
+    <View style={{backgroundColor: COLORS.primary}}>
       <View style={styles.container}>
         <View style={styles.mainView}>
           {state.routes.map((route, index) => {
             const isFocused = state.index === index;
+            const icon = route.name === 'Dashboard' ? ImagePath.homeIcon : route.name === 'AddDrink' ? ImagePath.addIcon : ImagePath.SettingsIcon;
             const onPress = () => {
               if (!isFocused) {
                 navigation.navigate(route.name);
@@ -34,18 +36,19 @@ const CustomTab: React.FC<CustomTabProps> = ({state, navigation}) => {
                 activeOpacity={1}
                 key={route.name}>
                 <View style={styles.iconContainer}>
+                  <Image source={icon} style={{opacity: isFocused ? 1 : 0.5}} />
                   <Text
                     style={[
                       styles.tabText,
                       {
-                        color: isFocused ? COLORS.black : 'rgba(0, 0, 0, 0.5)',
+                        opacity: isFocused ? 1 : 0.5,
                       },
                     ]}>
                     {route.name === 'Dashboard'
-                      ? 'HOME'
+                      ? 'Home'
                       : route.name === 'AddDrink'
-                      ? 'ADD DRINK'
-                      : 'SETTINGS'}
+                      ? 'Add'
+                      : 'Settings'}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -61,13 +64,13 @@ export default CustomTab;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.black,
-    paddingBottom: Platform.OS === 'ios' ? (Platform.constants?.systemName === "iPadOS" ? wp(2) : wp(10)) : wp(10),
+    backgroundColor: COLORS.primary,
+    paddingBottom: Platform.OS === 'ios' ? (Platform.constants?.systemName === "iPadOS" ? wp(2) : wp(8)) : wp(180),
   },
   mainView: {
     flexDirection: 'row',
     marginHorizontal: wp(5),
-    borderRadius: wp(1),
+    borderRadius: wp(5),
     backgroundColor: COLORS.white,
     paddingVertical: wp(3),
     justifyContent: 'space-between',
@@ -80,10 +83,13 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: 'center',
+    gap: wp(1),
+    justifyContent: 'center',
   },
   tabText: {
-    fontWeight: '400',
-    fontSize: 35,
+    fontWeight: '500',
+    fontSize: 15,
     fontFamily: FONTS.JostRegular,
+    color: COLORS.primary,
   },
 });

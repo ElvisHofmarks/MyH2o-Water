@@ -18,7 +18,7 @@ const AppNavigator: React.FC = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName={onBoarding ? 'Dashboard' : 'OnBoarding'}
+      initialRouteName={onBoarding ? 'MyTabs' : 'OnBoarding'}
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="OnBoarding" component={OnBoarding} />
       <Stack.Screen name="MyTabs" component={MyTabs} />

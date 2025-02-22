@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet  } from 'react-native';
+import { COLORS } from '../config/Constants';
 
 const Dashboard: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.primary,
   },
 });
 export default Dashboard;
