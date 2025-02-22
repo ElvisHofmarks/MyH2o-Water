@@ -5,6 +5,7 @@ export default {
     homeIcon: require("./images/homeIcon.png"),
     addIcon: require("./images/addIcon.png"),
     SettingsIcon: require("./images/SettingsIcon.png"),
+    containerIcon: require("./images/containerIcon.png"),
   
   };
   
