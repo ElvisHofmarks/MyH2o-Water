@@ -6,6 +6,18 @@ export default {
     addIcon: require("./images/addIcon.png"),
     SettingsIcon: require("./images/SettingsIcon.png"),
     containerIcon: require("./images/containerIcon.png"),
-  
+    water: require("./images/water.png"),
+    Coffee: require("./images/Coffee.png"),
+    Tea: require("./images/Tea.png"),
+    Soda: require("./images/Soda.png"),
+    Beer: require("./images/Beer.png"),
+    Wine: require("./images/Wine.png"),
+    Spirits: require("./images/Spirits.png"),
+    Juice: require("./images/Juice.png"),
+    Milk: require("./images/Milk.png"),
+    camera: require("./images/camera.png"),
+    dummyImage: require("./images/dummyImage.png"),
+    logo: require("./images/logo.png"),
+    editIcon: require("./images/editIcon.png"),
   };
   
