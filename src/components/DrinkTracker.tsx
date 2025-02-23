@@ -1,38 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
-    Dimensions,
     Modal,
     TouchableWithoutFeedback,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { COLORS, FONTS } from '../config/Constants';
+import { RootState } from '../redux/store';
 
-type DrinkData = {
+interface DrinkSummary {
     name: string;
     amount: number;
-    maxAmount: number;
-};
-
-const drinks: DrinkData[] = [
-    { name: 'Coffee', amount: 0.5, maxAmount: 2 },
-    { name: 'Tea', amount: 0.25, maxAmount: 2 },
-    { name: 'Soda', amount: 1.75, maxAmount: 2 },
-    { name: 'Beer', amount: 1.5, maxAmount: 2 },
-    { name: 'Wine', amount: 0.5, maxAmount: 2 },
-    { name: 'Spirits', amount: 0.25, maxAmount: 2 },
-    { name: 'Juice', amount: 0.1, maxAmount: 2 },
-    { name: 'Milk', amount: 0.5, maxAmount: 2 },
-];
+}
 
 const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
     const [selectedPeriod, setSelectedPeriod] = useState<'Today' | 'Week' | 'Month'>('Today');
+    const { drinkHistory, settings, dailyStats } = useSelector((state: RootState) => state.user);
+
+    const filteredData = useMemo(() => {
+        const now = new Date();
+        const today = now.toISOString().split('T')[0];
+        
+        let startDate = new Date();
+        if (selectedPeriod === 'Week') {
+            startDate.setDate(startDate.getDate() - 7);
+        } else if (selectedPeriod === 'Month') {
+            startDate.setMonth(startDate.getMonth() - 1);
+        } else {
+            startDate = new Date(today);
+        }
+
+        return drinkHistory.filter(drink => {
+            const drinkDate = new Date(drink.timestamp);
+            return drinkDate >= startDate && drinkDate <= now;
+        });
+    }, [drinkHistory, selectedPeriod]);
+
+    const drinkOptions = [
+        'Water', 'Coffee', 'Tea', 'Soda', 'Beer', 
+        'Wine', 'Spirits', 'Juice', 'Milk'
+    ];
+
+    const drinkSummary = useMemo(() => {
+        const summary: { [key: string]: DrinkSummary } = {};
+        
+        // Initialize all drink types with 0
+        drinkOptions.forEach(type => {
+            summary[type] = {
+                name: type,
+                amount: 0
+            };
+        });
+
+        // Update amounts from filtered data
+        filteredData.forEach(drink => {
+            if (summary[drink.type]) {
+                summary[drink.type].amount += drink.volume;
+            }
+        });
+
+        return Object.values(summary);
+    }, [filteredData]);
+
+    const stats = useMemo(() => {
+        const totalDays = selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1;
+        const completedDays = dailyStats.filter(stat => 
+            stat.totalVolume >= settings.dailyGoal
+        ).length;
+
+        const totalWater = filteredData.reduce((sum, drink) => 
+            drink.type === 'Water' ? sum + drink.volume : sum, 0);
+
+        return {
+            waterAmount: totalWater / 1000, // Convert to liters
+            targetAmount: (settings.dailyGoal * totalDays) / 1000, // Convert to liters
+            completedDays,
+            uncompletedDays: totalDays - completedDays
+        };
+    }, [filteredData, settings.dailyGoal, dailyStats, selectedPeriod]);
 
     const renderProgressBar = (amount: number, maxAmount: number) => {
+        const maxAmountInL = 2000; // 2L max for visualization
         const percentage = (amount / maxAmount) * 100;
         return (
             <View style={styles.progressBarContainer}>
@@ -49,7 +102,7 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+                <TouchableWithoutFeedback >
                     <View style={styles.overlay}>
                         <View style={styles.modalContent}>
                             <View style={styles.container}>
@@ -58,21 +111,27 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
                                 </View>
                                 {/* Water Amount Section */}
                                 <View style={styles.waterAmount}>
-                                    <Text style={styles.waterText}>Monthly water amount: 22L / 81L</Text>
+                                    <Text style={styles.waterText}>
+                                        {selectedPeriod} water amount: {stats.waterAmount.toFixed(1)}L / {stats.targetAmount.toFixed(1)}L
+                                    </Text>
                                 </View>
 
                                 {/* Days Progress Section */}
                                 <View style={styles.daysContainer}>
                                     <View style={styles.daysCompleted}>
-                                        <Text style={styles.daysText}>Days completed: 2/30 days</Text>
+                                        <Text style={styles.daysText}>
+                                            Days completed: {stats.completedDays}/{selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1} days
+                                        </Text>
                                     </View>
                                     <View style={styles.daysUncompleted}>
-                                        <Text style={styles.daysText}>Days uncompleted: 0 days</Text>
+                                        <Text style={styles.daysText}>
+                                            Days uncompleted: {stats.uncompletedDays} days
+                                        </Text>
                                     </View>
                                 </View>
 
                                 {/* Other Drinks Section */}
-                                <Text style={styles.sectionTitle}>Other drinks:</Text>
+                                <Text style={styles.sectionTitle}>Drink Summary:</Text>
 
                                 {/* Period Selector */}
                                 <View style={styles.periodSelector}>
@@ -92,10 +151,10 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
 
                                 {/* Drinks List */}
                                 <ScrollView style={styles.drinksList}>
-                                    {drinks.map((drink) => (
+                                    {drinkSummary.map((drink) => (
                                         <View key={drink.name} style={styles.drinkItem}>
                                             <Text style={styles.drinkName}>{drink.name}</Text>
-                                            {renderProgressBar(drink.amount, drink.maxAmount)}
+                                            {renderProgressBar(drink.amount, 2000)}
                                         </View>
                                     ))}
 
@@ -194,7 +253,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     drinkItem: {
-        marginBottom: 8,
+        marginBottom: 5,
         flexDirection: "row",
         flex: 1,
         justifyContent: "space-between",

@@ -9,6 +9,8 @@ import SuggestionCard from '../components/SuggestionCard';
 import WaterStatistics from '../components/WaterStatistics';
 import DrinkTracker from '../components/DrinkTracker';
 import MyDataModal from '../components/MyDataModal';
+
+
 const Dashboard: React.FC = () => {
   const { settings, dailyStats ,profile} = useSelector((state: RootState) => state.user);
   const [drinkModalVisible, setDrinkModalVisible] = useState(false);
@@ -25,12 +27,14 @@ const Dashboard: React.FC = () => {
         <View style={styles.rowContainer}>
           <View style={styles.columnContainer}>
             <Text style={styles.averageText}>From average daily amount*</Text>
-            <Text style={styles.averageNote}>*2.3L calculated by your data</Text>
+            <Text style={styles.averageNote}>*{(settings.dailyGoal / 1000).toFixed(1)}L calculated by your data</Text>
           </View>
           <View>
             <Image source={ImagePath.containerIcon} />
             <View style={{ position: "absolute", top: wp(14), right: wp(6.5) }}>
-              <Text style={styles.percentageText}>75%</Text>
+              <Text style={styles.percentageText}>
+                {Math.min(Math.round((todayVolume / settings.dailyGoal) * 100), 100)}%
+              </Text>
             </View>
           </View>
 

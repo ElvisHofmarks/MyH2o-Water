@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
+import { updateProfile } from '../redux/userSlice';
 import {
     View,
     Text,
@@ -20,18 +23,9 @@ interface ProfileScreenProps {
     navigation?: any; // Add proper navigation typing based on your setup
 }
 
-interface UserProfile {
-    name: string;
-    avatar: string | null;
-    isPremium: boolean;
-}
-
 export default function Settings({ navigation }: ProfileScreenProps) {
-    const [profile, setProfile] = useState<UserProfile>({
-        name: 'Martin',
-        avatar: null,
-        isPremium: true,
-    });
+    const dispatch = useDispatch();
+    const profile = useSelector((state: RootState) => state.user.profile);
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState(profile.name);
 
@@ -42,7 +36,7 @@ export default function Settings({ navigation }: ProfileScreenProps) {
 
     const saveName = () => {
         if (tempName.trim()) {
-            setProfile(prev => ({ ...prev, name: tempName.trim() }));
+            dispatch(updateProfile({ name: tempName.trim() }));
             setIsEditingName(false);
         }
     };
@@ -52,7 +46,7 @@ export default function Settings({ navigation }: ProfileScreenProps) {
             mediaType: 'photo',
             includeBase64: true,
         }).then(image => {
-            setProfile(prev => ({ ...prev, avatar: image.path }));
+            dispatch(updateProfile({ avatar: image.path }));
         }).catch(error => {
             console.error('Image Picker Error: ', error);
         });

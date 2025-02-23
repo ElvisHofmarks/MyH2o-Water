@@ -5,8 +5,39 @@ import { RootState } from '../redux/store';
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { COLORS, FONTS } from '../config/Constants';
 
+const suggestions = {
+    twentyFive: [
+        "Great start! Keep it up, and you'll feel more energized throughout the day!",
+        "You're off to a good beginning! A little more hydration goes a long way.",
+        "Nice work! Your body is thanking you. Ready for the next sip?",
+        "Awesome! Just a quarter down. Keep the momentum going!",
+        "Every drop counts! You're already 25% closer to your daily goal!"
+    ],
+    fifty: [
+        "Halfway there! Your body is loving the hydration!",
+        "50% done! Keep drinking to maintain that focus and energy.",
+        "Awesome job! You're halfway to feeling your best today!",
+        "Great progress! Staying hydrated is a great way to power through the day.",
+        "You're at 50%! Keep sipping to stay refreshed and alert."
+    ],
+    seventyFive: [
+        "Almost there! Just a little more to reach your daily goal!",
+        "You're 75% hydrated! One step closer to feeling fantastic!",
+        "Awesome! You're nearly at the finish line. Keep it up!",
+        "So close! Your body's loving this. Finish strong!",
+        "Just a bit more to go! You're doing great!"
+    ],
+    hundred: [
+        "Congratulations! You've reached your hydration goal today!",
+        "Fantastic! You did it! Your body thanks you for staying hydrated!",
+        "Mission accomplished! Way to take care of yourself today!",
+        "Awesome! You nailed it! Hydration goals on point!",
+        "Perfect! You've hit 100%! Feel the difference?"
+    ]
+};
+
 const SuggestionCard: React.FC = () => {
-    const { settings, dailyStats, suggestions } = useSelector((state: RootState) => state.user);
+    const { settings, dailyStats } = useSelector((state: RootState) => state.user);
     
     const getSuggestion = () => {
         const today = new Date().toISOString().split('T')[0];

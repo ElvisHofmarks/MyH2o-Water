@@ -14,6 +14,8 @@ interface UserSettings {
 }
 
 interface UserProfile {
+  name: string;
+  avatar: string | null;
   gender: 'men' | 'women' | 'other';
   weightUnit: 'kg' | 'lbs';
   age: string;
@@ -92,6 +94,8 @@ const initialState: UserState = {
   drinkHistory: [],
   dailyStats: [],
   profile: {
+    name: '',
+    avatar: null,
     gender: 'men',
     weightUnit: 'kg',
     age: '',
