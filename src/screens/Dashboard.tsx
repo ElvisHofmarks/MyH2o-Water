@@ -8,10 +8,11 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import SuggestionCard from '../components/SuggestionCard';
 import WaterStatistics from '../components/WaterStatistics';
 import DrinkTracker from '../components/DrinkTracker';
-
+import MyDataModal from '../components/MyDataModal';
 const Dashboard: React.FC = () => {
-  const { settings, dailyStats } = useSelector((state: RootState) => state.user);
+  const { settings, dailyStats ,profile} = useSelector((state: RootState) => state.user);
   const [drinkModalVisible, setDrinkModalVisible] = useState(false);
+  const [myDataModalVisible, setMyDataModalVisible] = useState(profile.age ? false : true);
   // Get today's stats
   const today = new Date().toISOString().split('T')[0];
   const todayStats = dailyStats.find((stat: { date: string; totalVolume: number }) => stat.date === today);
@@ -51,6 +52,7 @@ const Dashboard: React.FC = () => {
         <WaterStatistics />
       </View>
       {drinkModalVisible && <DrinkTracker modalVisible={drinkModalVisible} setModalVisible={setDrinkModalVisible} />}
+      {myDataModalVisible && <MyDataModal modalVisible={myDataModalVisible} setModalVisible={setMyDataModalVisible} />}
     </View>
   );
 };
