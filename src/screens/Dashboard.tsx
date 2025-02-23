@@ -116,6 +116,8 @@ const styles = StyleSheet.create({
     marginTop: wp(1),
     alignItems: "center",
     justifyContent: "center",
+    height: wp(30),
+    marginLeft: wp(6),
   },
   header: {
     flexDirection: 'row',
