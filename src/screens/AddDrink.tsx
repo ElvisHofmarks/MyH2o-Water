@@ -96,17 +96,13 @@ export default function AddDrink() {
         onPress={() => {
           if (selectedDrink) {
             const selectedDrinkData = drinkOptions.find(d => d.id === selectedDrink);
-            // Calculate extra water needed
             const extraWater = selectedDrinkData?.name !== 'Water' ? 
               (volume / 50) * getExtraWaterPerStep(selectedDrinkData?.name) : 0;
-
-            // Add the main drink
+              
             dispatch(addDrink({
               type: selectedDrinkData?.name || '',
               volume: volume
             }));
-
-            // If extra water is needed, add it as a separate water entry
             if (extraWater > 0) {
               dispatch(addDrink({
                 type: 'Water',

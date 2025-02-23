@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
           </View>
           <View>
             <Image source={ImagePath.containerIcon} />
-            <View style={{ position: "absolute", top: wp(14), right: wp(6.5) }}>
+            <View style={{ position: "absolute", top: wp(14), right: wp(6) }}>
               <Text style={styles.percentageText}>
                 {Math.min(Math.round((todayVolume / settings.dailyGoal) * 100), 100)}%
               </Text>
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   percentageText: {
     color: COLORS.white,
-    fontSize: 40,
+    fontSize: 35,
     fontFamily: FONTS.JostMedium,
     fontWeight: "400"
   },

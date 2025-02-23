@@ -146,13 +146,13 @@ const userSlice = createSlice({
       }
 
       // If alcohol was added, trigger notification after 30 minutes
-      if (action.payload.type === 'Beer' || action.payload.type === 'Wine' || action.payload.type === 'Spirits') {
-        // This will be handled by the notification middleware
-        return {
-          ...state,
-          needsAlcoholReminder: true
-        };
-      }
+      // if (action.payload.type === 'Beer' || action.payload.type === 'Wine' || action.payload.type === 'Spirits') {
+      //   // This will be handled by the notification middleware
+      //   return {
+      //     ...state,
+      //     needsAlcoholReminder: true
+      //   };
+      // }
     },
     clearHistory: (state) => {
       state.drinkHistory = [];
