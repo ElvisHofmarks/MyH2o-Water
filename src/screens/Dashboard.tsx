@@ -1,12 +1,21 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 import { COLORS, FONTS } from '../config/Constants';
 import ImagePath from '../assets/ImagePath';
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import SuggestionCard from '../components/SuggestionCard';
 import WaterStatistics from '../components/WaterStatistics';
+import DrinkTracker from '../components/DrinkTracker';
 
 const Dashboard: React.FC = () => {
+  const { settings, dailyStats } = useSelector((state: RootState) => state.user);
+  const [drinkModalVisible, setDrinkModalVisible] = useState(false);
+  // Get today's stats
+  const today = new Date().toISOString().split('T')[0];
+  const todayStats = dailyStats.find((stat: { date: string; totalVolume: number }) => stat.date === today);
+  const todayVolume = todayStats?.totalVolume || 0;
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea} />
@@ -17,7 +26,13 @@ const Dashboard: React.FC = () => {
             <Text style={styles.averageText}>From average daily amount*</Text>
             <Text style={styles.averageNote}>*2.3L calculated by your data</Text>
           </View>
-          <Image source={ImagePath.containerIcon} />
+          <View>
+            <Image source={ImagePath.containerIcon} />
+            <View style={{ position: "absolute", top: wp(14), right: wp(6.5) }}>
+              <Text style={styles.percentageText}>75%</Text>
+            </View>
+          </View>
+
         </View>
       </View>
       <View>
@@ -29,10 +44,13 @@ const Dashboard: React.FC = () => {
       <View style={styles.statisticsContainer}>
         <View style={styles.header}>
           <Text style={styles.title}>My statistic</Text>
-          <Text style={styles.showMore}>Show more</Text>
+          <TouchableOpacity onPress={() => setDrinkModalVisible(true)}>
+            <Text style={styles.showMore}>Show more</Text>
+          </TouchableOpacity>
         </View>
         <WaterStatistics />
       </View>
+      {drinkModalVisible && <DrinkTracker modalVisible={drinkModalVisible} setModalVisible={setDrinkModalVisible} />}
     </View>
   );
 };
@@ -113,6 +131,12 @@ const styles = StyleSheet.create({
   statisticsContainer: {
     marginHorizontal: wp(6),
     marginTop: wp(3),
+  },
+  percentageText: {
+    color: COLORS.white,
+    fontSize: 40,
+    fontFamily: FONTS.JostMedium,
+    fontWeight: "400"
   },
 });
 export default Dashboard;

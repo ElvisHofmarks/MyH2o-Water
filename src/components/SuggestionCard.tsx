@@ -1,26 +1,45 @@
-import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { COLORS, FONTS } from '../config/Constants';
-interface SuggestionCardProps {
 
-}
+const SuggestionCard: React.FC = () => {
+    const { settings, dailyStats, suggestions } = useSelector((state: RootState) => state.user);
+    
+    const getSuggestion = () => {
+        const today = new Date().toISOString().split('T')[0];
+        const todayStats = dailyStats.find((stat: { date: string; totalVolume: number }) => stat.date === today);
+        const progress = todayStats ? (todayStats.totalVolume / settings.dailyGoal) * 100 : 0;
 
-const SuggestionCard: React.FC<SuggestionCardProps> = ({ }) => {
+        const getRandomSuggestion = (arr: string[]) => 
+            arr[Math.floor(Math.random() * arr.length)];
+
+        if (progress >= 100) {
+            return getRandomSuggestion(suggestions.hundred);
+        } else if (progress >= 75) {
+            return getRandomSuggestion(suggestions.seventyFive);
+        } else if (progress >= 50) {
+            return getRandomSuggestion(suggestions.fifty);
+        } else if (progress >= 25) {
+            return getRandomSuggestion(suggestions.twentyFive);
+        } else {
+            return "Start your day with a glass of water! It helps kickstart your metabolism.";
+        }
+    };
+
+    const suggestion = useMemo(getSuggestion, [dailyStats, settings.dailyGoal]);
+
     return (
-        <>
-            <View style={[styles.card]}>
-                <Text style={styles.cardText}>
-                    Its time for glass of water, It delivers
-                    oxygen throughout the body
-                </Text>
-                <View style={styles.dotsContainer}>
-                    {[0, 1, 2].map((_, index) => (
-                        <View key={index} style={styles.dot} />
-                    ))}
-                </View>
+        <View style={styles.card}>
+            <Text style={styles.cardText}>{suggestion}</Text>
+            <View style={styles.dotsContainer}>
+                {[0, 1, 2].map((_, index) => (
+                    <View key={index} style={styles.dot} />
+                ))}
             </View>
-        </>
+        </View>
     );
 };
 

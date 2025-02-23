@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { useDispatch } from 'react-redux';
 import ImagePath from '../assets/ImagePath';
 import { COLORS, FONTS } from '../config/Constants';
+import { getExtraWaterPerStep } from '../services/BeverageCalculator';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { addDrink } from '../redux/userSlice';
 
 
 
@@ -19,13 +22,35 @@ const drinkOptions: any[] = [
 ];
 
 export default function AddDrink() {
+  const dispatch = useDispatch();
   const [selectedDrink, setSelectedDrink] = useState<string | null>(null);
   const [volume, setVolume] = useState(50);
+  const [extraWater, setExtraWater] = useState(0);
 
   const adjustVolume = (amount: number) => {
     const newVolume = volume + amount;
-    if (newVolume >= 0 && newVolume <= 1000) {
+    if (newVolume >= 50 && newVolume <= 1000) {
       setVolume(newVolume);
+      
+      // Calculate extra water if drink is selected
+      if (selectedDrink) {
+        const selectedDrinkData = drinkOptions.find(d => d.id === selectedDrink);
+        if (selectedDrinkData) {
+          const stepsCount = newVolume / 50;
+          const waterPerStep = getExtraWaterPerStep(selectedDrinkData.name);
+          setExtraWater(stepsCount * waterPerStep);
+        }
+      }
+    }
+  };
+
+  const handleDrinkSelect = (drinkId: string) => {
+    setSelectedDrink(drinkId);
+    const selectedDrinkData = drinkOptions.find(d => d.id === drinkId);
+    if (selectedDrinkData) {
+      const stepsCount = volume / 50;
+      const waterPerStep = getExtraWaterPerStep(selectedDrinkData.name);
+      setExtraWater(stepsCount * waterPerStep);
     }
   };
 
@@ -41,7 +66,7 @@ export default function AddDrink() {
               styles.drinkOption,
 
             ]}
-            onPress={() => setSelectedDrink(drink.id)}
+            onPress={() => handleDrinkSelect(drink.id)}
           >
             <Image source={drink.icon} style={{ borderWidth: 3, borderColor: selectedDrink === drink.id ? "white" : 'transparent', borderRadius: wp(2.5) }} />
           </TouchableOpacity>
@@ -51,7 +76,7 @@ export default function AddDrink() {
       <View style={styles.volumeControl}>
         <TouchableOpacity
           style={styles.volumeButton}
-          onPress={() => adjustVolume(-10)}
+          onPress={() => adjustVolume(-50)}
         >
           <Text style={styles.volumeButtonText}>-</Text>
         </TouchableOpacity>
@@ -60,7 +85,7 @@ export default function AddDrink() {
 
         <TouchableOpacity
           style={styles.volumeButton}
-          onPress={() => adjustVolume(10)}
+          onPress={() => adjustVolume(50)}
         >
           <Text style={styles.volumeButtonText}>+</Text>
         </TouchableOpacity>
@@ -70,8 +95,26 @@ export default function AddDrink() {
         style={styles.addButton}
         onPress={() => {
           if (selectedDrink) {
-            // Handle adding drink
-            console.log(`Adding ${selectedDrink} - ${volume}ml`);
+            const selectedDrinkData = drinkOptions.find(d => d.id === selectedDrink);
+            // Calculate extra water needed
+            const extraWater = selectedDrinkData?.name !== 'Water' ? 
+              (volume / 50) * getExtraWaterPerStep(selectedDrinkData?.name) : 0;
+
+            // Add the main drink
+            dispatch(addDrink({
+              type: selectedDrinkData?.name || '',
+              volume: volume
+            }));
+
+            // If extra water is needed, add it as a separate water entry
+            if (extraWater > 0) {
+              dispatch(addDrink({
+                type: 'Water',
+                volume: extraWater
+              }));
+            }
+            setSelectedDrink(null);
+            setVolume(50);
           }
         }}
       >
@@ -82,6 +125,13 @@ export default function AddDrink() {
 }
 
 const styles = StyleSheet.create({
+  extraWaterText: {
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+    marginVertical: 10,
+    fontFamily: FONTS.JostRegular,
+  },
   container: {
     flex: 1,
     backgroundColor: COLORS.primary,
@@ -137,6 +187,9 @@ const styles = StyleSheet.create({
   volumeButton: {
     justifyContent: 'center',
     alignItems: 'center',
+    width:wp(10),
+    height:wp(10),
+    bottom:wp(1.5)
   },
   volumeButtonText: {
     color: 'white',

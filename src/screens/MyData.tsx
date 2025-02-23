@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -12,8 +12,10 @@ import {
     Image,
     Modal,
 } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
+import { updateProfile } from '../redux/userSlice';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImagePath from '../assets/ImagePath';
 import { COLORS, FONTS } from '../config/Constants';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -75,42 +77,18 @@ const TimeInput: React.FC<TimeInputProps> = ({ label, value, onChange }) => {
 };
 
 const MyData = ({ navigation }: any) => {
-    const [formData, setFormData] = useState<any>({
-        gender: 'men',
-        weightUnit: 'kg',
-        age: '',
-        weight: '',
-        workdayWakeTime: '7:00 AM',
-        workdayBedTime: '11:00 PM',
-        weekendWakeTime: '10:00 AM',
-        weekendBedTime: '12:00 AM',
-    });
-
+    const dispatch = useDispatch();
+    const profile = useSelector((state: RootState) => state.user.profile);
     const [errors, setErrors] = useState<Partial<Record<keyof any, string>>>({});
-
-    useEffect(() => {
-        loadSavedData();
-    }, []);
-
-    const loadSavedData = async () => {
-        try {
-            const savedData = await AsyncStorage.getItem('userData');
-            if (savedData) {
-                setFormData(JSON.parse(savedData));
-            }
-        } catch (error) {
-            Alert.alert('Error', 'Failed to load saved data');
-        }
-    };
 
     const validateForm = (): boolean => {
         const newErrors: Partial<Record<keyof any, string>> = {};
 
-        if (!formData.age || parseInt(formData.age) < 1 || parseInt(formData.age) > 120) {
+        if (!profile.age || parseInt(profile.age) < 1 || parseInt(profile.age) > 120) {
             newErrors.age = 'Please enter a valid age between 1 and 120';
         }
 
-        if (!formData.weight || parseFloat(formData.weight) <= 0) {
+        if (!profile.weight || parseFloat(profile.weight) <= 0) {
             newErrors.weight = 'Please enter a valid weight';
         }
 
@@ -118,20 +96,16 @@ const MyData = ({ navigation }: any) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSave = async () => {
+    const handleSave = () => {
         if (!validateForm()) {
             Alert.alert('Error', 'Please correct the errors in the form');
             return;
         }
 
-        try {
-            await AsyncStorage.setItem('userData', JSON.stringify(formData));
-            Alert.alert('Success', 'Data saved successfully', [
-                { text: 'OK', onPress: () => navigation.goBack() }
-            ]);
-        } catch (error) {
-            Alert.alert('Error', 'Failed to save data');
-        }
+        dispatch(updateProfile(profile));
+        Alert.alert('Success', 'Data saved successfully', [
+            { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
     };
 
     const convertWeight = (value: string) => {
@@ -139,7 +113,7 @@ const MyData = ({ navigation }: any) => {
         const numValue = parseFloat(value);
         if (isNaN(numValue)) return value;
 
-        if (formData.weightUnit === 'kg') {
+        if (profile.weightUnit === 'kg') {
             return (numValue * 2.20462).toFixed(1);
         } else {
             return (numValue / 2.20462).toFixed(1);
@@ -147,11 +121,10 @@ const MyData = ({ navigation }: any) => {
     };
 
     const handleWeightUnitChange = (unit: 'kg' | 'lbs') => {
-        if (unit !== formData.weightUnit) {
-            setFormData((prev: any) => ({
-                ...prev,
+        if (unit !== profile.weightUnit) {
+            dispatch(updateProfile({
                 weightUnit: unit,
-                weight: convertWeight(prev.weight)
+                weight: convertWeight(profile.weight)
             }));
         }
     };
@@ -177,13 +150,13 @@ const MyData = ({ navigation }: any) => {
                             key={gender}
                             style={[
                                 styles.genderButton,
-                                formData.gender === gender && styles.genderButtonSelected,
+                                profile.gender === gender && styles.genderButtonSelected,
                             ]}
-                            onPress={() => setFormData((prev: any) => ({ ...prev, gender }))}
+                            onPress={() => dispatch(updateProfile({ gender }))}
                         >
                             <Text style={[
                                 styles.genderButtonText,
-                                formData.gender === gender && styles.genderButtonTextSelected,
+                                profile.gender === gender && styles.genderButtonTextSelected,
                             ]}>
                                 {gender.charAt(0).toUpperCase() + gender.slice(1)}
                             </Text>
@@ -198,7 +171,7 @@ const MyData = ({ navigation }: any) => {
                             key={unit}
                             style={[
                                 styles.weightUnitButton,
-                                formData.weightUnit === unit && styles.weightUnitButtonSelected,
+                                profile.weightUnit === unit && styles.weightUnitButtonSelected,
                             ]}
                             onPress={() => handleWeightUnitChange(unit)}
                         >
@@ -212,8 +185,8 @@ const MyData = ({ navigation }: any) => {
                 <Text style={styles.label}>Select your age</Text>
                 <TextInput
                     style={[styles.input, errors.age && styles.inputError]}
-                    value={formData.age}
-                    onChangeText={(age) => setFormData((prev: any) => ({ ...prev, age }))}
+                    value={profile.age}
+                    onChangeText={(age) => dispatch(updateProfile({ age }))}
                     keyboardType="numeric"
                     maxLength={3}
                     placeholder="Your age"
@@ -224,36 +197,36 @@ const MyData = ({ navigation }: any) => {
                 <Text style={styles.label}>Enter your weight</Text>
                 <TextInput
                     style={[styles.input, errors.weight && styles.inputError]}
-                    value={formData.weight}
-                    onChangeText={(weight) => setFormData((prev: any) => ({ ...prev, weight }))}
+                    value={profile.weight}
+                    onChangeText={(weight) => dispatch(updateProfile({ weight }))}
                     keyboardType="decimal-pad"
-                    placeholder={`Enter weight in ${formData.weightUnit}`}
+                    placeholder={`Enter weight in ${profile.weightUnit}`}
                     placeholderTextColor="#999"
                 />
                 {errors.weight && <Text style={styles.errorText}>{errors.weight}</Text>}
 
                 <TimeInput
                     label="Average work day wake up time"
-                    value={formData.workdayWakeTime}
-                    onChange={(time) => setFormData((prev: any) => ({ ...prev, workdayWakeTime: time }))}
+                    value={profile.workdayWakeTime}
+                    onChange={(time) => dispatch(updateProfile({ workdayWakeTime: time }))}
                 />
 
                 <TimeInput
                     label="Average work day bed time"
-                    value={formData.workdayBedTime}
-                    onChange={(time) => setFormData((prev: any) => ({ ...prev, workdayBedTime: time }))}
+                    value={profile.workdayBedTime}
+                    onChange={(time) => dispatch(updateProfile({ workdayBedTime: time }))}
                 />
 
                 <TimeInput
                     label="Average weekend wake up time"
-                    value={formData.weekendWakeTime}
-                    onChange={(time) => setFormData((prev: any) => ({ ...prev, weekendWakeTime: time }))}
+                    value={profile.weekendWakeTime}
+                    onChange={(time) => dispatch(updateProfile({ weekendWakeTime: time }))}
                 />
 
                 <TimeInput
                     label="Average weekend bed time"
-                    value={formData.weekendBedTime}
-                    onChange={(time) => setFormData((prev: any) => ({ ...prev, weekendBedTime: time }))}
+                    value={profile.weekendBedTime}
+                    onChange={(time) => dispatch(updateProfile({ weekendBedTime: time }))}
                 />
 
                 <TouchableOpacity style={styles.saveButton} onPress={handleSave}>

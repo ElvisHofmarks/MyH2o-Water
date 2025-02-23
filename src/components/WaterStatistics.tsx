@@ -1,28 +1,45 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 import { FONTS } from '../config/Constants';
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { RootState } from '../redux/store';
+
 type DayData = {
     day: string;
     amount: number;
 };
 
-const data: DayData[] = [
-    { day: 'M', amount: 2.5 },
-    { day: 'T', amount: 1.8 },
-    { day: 'W', amount: 1.5 },
-    { day: 'T', amount: 1.2 },
-    { day: 'F', amount: 2.3 },
-    { day: 'S', amount: 1.0 },
-    { day: 'S', amount: 0.3 },
-];
+const getDayLetter = (date: string): string => {
+    const day = new Date(date).getDay();
+    return ['S', 'M', 'T', 'W', 'T', 'F', 'S'][day];
+};
+
+const getLastSevenDays = () => {
+    const dates = [];
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push(date.toISOString().split('T')[0]);
+    }
+    return dates;
+};
 
 const WaterStatistics = () => {
-    const maxValue =5; 
+    const { dailyStats, settings } = useSelector((state: RootState) => state.user);
+    const maxValue = Math.max(settings.dailyGoal / 1000, 5); // Convert to L, minimum 5L for scale
+    
+    const data: DayData[] = getLastSevenDays().map(date => {
+        const stats = dailyStats.find((stat: { date: string }) => stat.date === date);
+        return {
+            day: getDayLetter(date),
+            amount: stats ? stats.totalVolume / 1000 : 0 // Convert mL to L
+        };
+    });
 
     return (
         <View style={styles.card}>
-            <Text style={styles.goalText}>Daily goal 2.4L</Text>
+            <Text style={styles.goalText}>Daily goal {settings.dailyGoal / 1000}L</Text>
 
             <View style={styles.chartContainer}>
                 {/* Y-axis labels */}
