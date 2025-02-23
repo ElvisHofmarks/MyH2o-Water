@@ -102,72 +102,74 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <TouchableWithoutFeedback >
+                <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
                     <View style={styles.overlay}>
                         <View style={styles.modalContent}>
-                            <View style={styles.container}>
-                                <View>
-                                    <View style={{ backgroundColor: COLORS.white, height: wp(2), width: wp(20), alignSelf: "center", justifyContent: "center", borderRadius: wp(10) }} />
-                                </View>
-                                {/* Water Amount Section */}
-                                <View style={styles.waterAmount}>
-                                    <Text style={styles.waterText}>
-                                        {selectedPeriod} water amount: {stats.waterAmount.toFixed(1)}L / {stats.targetAmount.toFixed(1)}L
-                                    </Text>
-                                </View>
-
-                                {/* Days Progress Section */}
-                                <View style={styles.daysContainer}>
-                                    <View style={styles.daysCompleted}>
-                                        <Text style={styles.daysText}>
-                                            Days completed: {stats.completedDays}/{selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1} days
+                            <TouchableWithoutFeedback>
+                                <View style={styles.container}>
+                                    <View>
+                                        <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: COLORS.white, height: wp(2), width: wp(20), alignSelf: "center", justifyContent: "center", borderRadius: wp(10) }} />
+                                    </View>
+                                    {/* Water Amount Section */}
+                                    <View style={styles.waterAmount}>
+                                        <Text style={styles.waterText}>
+                                            {selectedPeriod} water amount: {stats.waterAmount.toFixed(1)}L / {stats.targetAmount.toFixed(1)}L
                                         </Text>
                                     </View>
-                                    <View style={styles.daysUncompleted}>
-                                        <Text style={styles.daysText}>
-                                            Days uncompleted: {stats.uncompletedDays} days
-                                        </Text>
-                                    </View>
-                                </View>
 
-                                {/* Other Drinks Section */}
-                                <Text style={styles.sectionTitle}>Drink Summary:</Text>
-
-                                {/* Period Selector */}
-                                <View style={styles.periodSelector}>
-                                    {['Today', 'Week', 'Month'].map((period) => (
-                                        <TouchableOpacity
-                                            key={period}
-                                            style={[
-                                                styles.periodButton,
-                                                selectedPeriod === period && styles.selectedPeriod,
-                                            ]}
-                                            onPress={() => setSelectedPeriod(period as 'Today' | 'Week' | 'Month')}
-                                        >
-                                            <Text style={[styles.periodText, selectedPeriod === period && { color: COLORS.primary }]}>{period}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-
-                                {/* Drinks List */}
-                                <ScrollView style={styles.drinksList}>
-                                    {drinkSummary.map((drink) => (
-                                        <View key={drink.name} style={styles.drinkItem}>
-                                            <Text style={styles.drinkName}>{drink.name}</Text>
-                                            {renderProgressBar(drink.amount, 2000)}
-                                        </View>
-                                    ))}
-
-                                    {/* Volume Scale */}
-                                    <View style={styles.scaleContainer}>
-                                        {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((value) => (
-                                            <Text key={value} style={styles.scaleText}>
-                                                {value}l
+                                    {/* Days Progress Section */}
+                                    <View style={styles.daysContainer}>
+                                        <View style={styles.daysCompleted}>
+                                            <Text style={styles.daysText}>
+                                                Days completed: {stats.completedDays}/{selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1} days
                                             </Text>
+                                        </View>
+                                        <View style={styles.daysUncompleted}>
+                                            <Text style={styles.daysText}>
+                                                Days uncompleted: {stats.uncompletedDays} days
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                    {/* Other Drinks Section */}
+                                    <Text style={styles.sectionTitle}>Drink Summary:</Text>
+
+                                    {/* Period Selector */}
+                                    <View style={styles.periodSelector}>
+                                        {['Today', 'Week', 'Month'].map((period) => (
+                                            <TouchableOpacity
+                                                key={period}
+                                                style={[
+                                                    styles.periodButton,
+                                                    selectedPeriod === period && styles.selectedPeriod,
+                                                ]}
+                                                onPress={() => setSelectedPeriod(period as 'Today' | 'Week' | 'Month')}
+                                            >
+                                                <Text style={[styles.periodText, selectedPeriod === period && { color: COLORS.primary }]}>{period}</Text>
+                                            </TouchableOpacity>
                                         ))}
                                     </View>
-                                </ScrollView>
-                            </View>
+
+                                    {/* Drinks List */}
+                                    <ScrollView style={styles.drinksList}>
+                                        {drinkSummary.map((drink) => (
+                                            <View key={drink.name} style={styles.drinkItem}>
+                                                <Text style={styles.drinkName}>{drink.name}</Text>
+                                                {renderProgressBar(drink.amount, 2000)}
+                                            </View>
+                                        ))}
+
+                                        {/* Volume Scale */}
+                                        <View style={styles.scaleContainer}>
+                                            {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((value) => (
+                                                <Text key={value} style={styles.scaleText}>
+                                                    {value}l
+                                                </Text>
+                                            ))}
+                                        </View>
+                                    </ScrollView>
+                                </View>
+                            </TouchableWithoutFeedback>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
