@@ -19,5 +19,6 @@ export default {
     dummyImage: require("./images/dummyImage.png"),
     logo: require("./images/logo.png"),
     editIcon: require("./images/editIcon.png"),
+    backIcon: require("./images/backIcon.png"),
   };
   

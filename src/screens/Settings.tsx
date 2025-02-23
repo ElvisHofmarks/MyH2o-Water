@@ -95,7 +95,7 @@ export default function Settings({ navigation }: ProfileScreenProps) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => { }}
+                    onPress={() => navigation.navigate('MyData')}
                 >
                     <Text style={styles.buttonText}>My Data</Text>
                 </TouchableOpacity>

@@ -10,7 +10,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomTab from './CustomTab';
 import AddDrink from '../screens/AddDrink';
 import Settings from '../screens/Settings';
-
+import MyData from '../screens/MyData';
 const Stack = createNativeStackNavigator<any>();
 
 const AppNavigator: React.FC = () => {
@@ -22,6 +22,7 @@ const AppNavigator: React.FC = () => {
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="OnBoarding" component={OnBoarding} />
       <Stack.Screen name="MyTabs" component={MyTabs} />
+      <Stack.Screen name="MyData" component={MyData} />
     </Stack.Navigator>
   );
 };
