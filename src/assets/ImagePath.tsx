@@ -20,5 +20,6 @@ export default {
     logo: require("./images/logo.png"),
     editIcon: require("./images/editIcon.png"),
     backIcon: require("./images/backIcon.png"),
+    lockIcon: require("./images/lockIcon.png"),
   };
   

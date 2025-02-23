@@ -26,6 +26,7 @@ export default function AddDrink() {
   const [selectedDrink, setSelectedDrink] = useState<string | null>(null);
   const [volume, setVolume] = useState(50);
   const [extraWater, setExtraWater] = useState(0);
+  const [isPremium, setIsPremium] = useState(false);
 
   const adjustVolume = (amount: number) => {
     const newVolume = volume + amount;
@@ -59,18 +60,24 @@ export default function AddDrink() {
       <Text style={styles.header}>Add drink</Text>
 
       <View style={styles.grid}>
-        {drinkOptions.map((drink) => (
+        {drinkOptions.map((drink, index) => (
           <TouchableOpacity
             key={drink.id}
+            disabled={!isPremium && index > 2}
             style={[
               styles.drinkOption,
-
+              {
+                opacity: isPremium ? 1 : index > 2 ? 0.5 : 1
+              }
             ]}
             onPress={() => handleDrinkSelect(drink.id)}
           >
             <Image source={drink.icon} style={{ borderWidth: 3, borderColor: selectedDrink === drink.id ? "white" : 'transparent', borderRadius: wp(2.5) }} />
           </TouchableOpacity>
         ))}
+        <TouchableOpacity style={{ position: "absolute", bottom: wp(20), alignSelf: "center", left: wp(35) }}>
+          <Image source={ImagePath.lockIcon} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.volumeControl}>
