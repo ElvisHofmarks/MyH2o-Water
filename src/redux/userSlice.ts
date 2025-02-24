@@ -1,10 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getExtraWaterPerStep } from "../services/BeverageCalculator";
 
 interface DrinkEntry {
   id: string;
   type: string;
   volume: number;
   timestamp: string;
+  extraWaterNeeded?: number;
 }
 
 interface UserSettings {
@@ -120,9 +122,16 @@ const userSlice = createSlice({
     },
     addDrink: (state, action: PayloadAction<Omit<DrinkEntry, 'id' | 'timestamp'>>) => {
       const timestamp = new Date().toISOString();
+      
+      // Calculate extra water needed based on drink type
+      const extraWaterNeeded = action.payload.type !== 'Water' 
+        ? (action.payload.volume / 50) * getExtraWaterPerStep(action.payload.type)
+        : 0;
+
       const newDrink: DrinkEntry = {
         id: Date.now().toString(),
         timestamp,
+        extraWaterNeeded, // Add this information to the drink entry
         ...action.payload,
       };
 
@@ -177,3 +186,19 @@ const userSlice = createSlice({
 
 export const { updateOnBoarding, updateSettings, addDrink, clearHistory, updateProfile } = userSlice.actions;
 export default userSlice.reducer;
+
+export const getHydrationRecommendations = (state: UserState) => {
+  const dailyGoal = state.settings.dailyGoal;
+  const totalDrankToday = state.dailyStats[state.dailyStats.length - 1]?.totalVolume || 0;
+  const extraWaterNeeded = state.drinkHistory
+    .filter(drink => drink.type !== 'Water')
+    .reduce((total, drink) => total + (drink.extraWaterNeeded || 0), 0);
+
+  return {
+    dailyGoal,
+    totalDrankToday,
+    extraWaterNeeded,
+    remainingToGoal: dailyGoal - totalDrankToday,
+    recommendedAdditionalWater: extraWaterNeeded
+  };
+};

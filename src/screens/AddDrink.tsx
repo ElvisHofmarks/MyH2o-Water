@@ -9,7 +9,13 @@ import { addDrink } from '../redux/userSlice';
 import Purchases from 'react-native-purchases';
 import RevenueCatUI from 'react-native-purchases-ui';
 
-
+interface DrinkEntry {
+  id: string;
+  type: string;
+  volume: number;
+  timestamp: string;
+  extraWaterNeeded?: number; // New field to track extra water recommendation
+}
 
 const drinkOptions: any[] = [
   { id: '1', name: 'Water', icon: ImagePath.water },
@@ -50,7 +56,7 @@ export default function AddDrink() {
   }, []);
 
 
-  Purchases.addCustomerInfoUpdateListener((info) => {
+  Purchases.addCustomerInfoUpdateListener((info:any) => {
     setActiveSubscription(info.activeSubscriptions.length > 0 || info.nonSubscriptionTransactions.length > 0);
 });
 

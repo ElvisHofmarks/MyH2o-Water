@@ -240,7 +240,7 @@ const MyData = ({ navigation }: any) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#7CD7E6',
+        backgroundColor: COLORS.primary,
     },
     header: {
         flexDirection: 'row',

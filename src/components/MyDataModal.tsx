@@ -135,7 +135,7 @@ const MyDataModal = ({ modalVisible, setModalVisible }: any) => {
             visible={modalVisible}
             animationType="slide"
         >
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
             <View style={styles.modalContent}>
                 <View style={styles.header}>
                 <View style={{ backgroundColor: COLORS.white, height: wp(2), width: wp(30), alignSelf: "center", justifyContent: "center", borderRadius: wp(10) }} />
@@ -233,7 +233,7 @@ const MyDataModal = ({ modalVisible, setModalVisible }: any) => {
                     </TouchableOpacity>
                 </ScrollView>
                 </View>
-            </SafeAreaView>
+            </View>
         </Modal>
     );
 };
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 5,
-        height: '90%',
+        height: '85%',
     },
 });
 

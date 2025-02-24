@@ -59,8 +59,8 @@ const WaterStatistics = () => {
                                 style={[
                                     styles.bar,
                                     {
-                                        height: `${(item.amount / maxValue) * 100}%`,
-                                        backgroundColor: item.day === 'S' ? '#6FC6D2' : 'white'
+                                        height: `${Math.min((item.amount / maxValue) * 100, 100)}%`,
+                                        backgroundColor: item.day === 'S' ? '#6FC6D2' : 'white',
                                     }
                                 ]}
                             />
