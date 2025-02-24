@@ -113,7 +113,7 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
                                     {/* Water Amount Section */}
                                     <View style={styles.waterAmount}>
                                         <Text style={styles.waterText}>
-                                            {selectedPeriod} water amount: {stats.waterAmount.toFixed(1)}L / {stats.targetAmount.toFixed(1)}L
+                                        {selectedPeriod} water amount: {stats.waterAmount.toFixed(1)}L / {stats.targetAmount.toFixed(1)}L
                                         </Text>
                                     </View>
 
@@ -121,12 +121,12 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
                                     <View style={styles.daysContainer}>
                                         <View style={styles.daysCompleted}>
                                             <Text style={styles.daysText}>
-                                                Days completed:             {stats.completedDays}/{selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1} days
+                                                Days completed:           {stats.completedDays}/{selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1} days
                                             </Text>
                                         </View>
                                         <View style={styles.daysUncompleted}>
                                             <Text style={styles.daysText}>
-                                                Days uncompleted:             {stats.uncompletedDays} days
+                                                Days uncompleted:           {stats.uncompletedDays} days
                                             </Text>
                                         </View>
                                     </View>
@@ -187,18 +187,17 @@ const styles = StyleSheet.create({
     waterAmount: {
         borderWidth: 3,
         borderColor: COLORS.white,
-        padding: 8,
+        padding: 15,
         borderRadius: 15,
         marginBottom: 10,
         marginHorizontal: wp(1),
-        marginTop: wp(5)
+        marginTop: wp(5),
     },
     waterText: {
         color: COLORS.white,
         fontSize: 20,
-        textAlign: 'center',
         fontFamily: FONTS.JostRegular,
-        fontWeight: "500"
+        fontWeight: "500",
     },
     daysContainer: {
         gap: 10,
