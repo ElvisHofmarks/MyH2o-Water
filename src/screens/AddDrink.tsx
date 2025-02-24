@@ -56,7 +56,7 @@ export default function AddDrink() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={{flex:1, backgroundColor:COLORS.primary}}>
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Add drink</Text>
 

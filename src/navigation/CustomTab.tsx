@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   mainView: {
     flexDirection: 'row',
-    marginHorizontal: wp(4),
+    marginHorizontal: wp(5),
     borderRadius: wp(5),
     backgroundColor: COLORS.white,
     paddingVertical: wp(3.2),
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: wp(0.2),
     justifyContent: 'center',
+    width: wp(15),
   },
   tabText: {
     fontWeight: '500',

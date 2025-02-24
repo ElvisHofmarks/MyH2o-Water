@@ -121,12 +121,12 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
                                     <View style={styles.daysContainer}>
                                         <View style={styles.daysCompleted}>
                                             <Text style={styles.daysText}>
-                                                Days completed: {stats.completedDays}/{selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1} days
+                                                Days completed:             {stats.completedDays}/{selectedPeriod === 'Month' ? 30 : selectedPeriod === 'Week' ? 7 : 1} days
                                             </Text>
                                         </View>
                                         <View style={styles.daysUncompleted}>
                                             <Text style={styles.daysText}>
-                                                Days uncompleted: {stats.uncompletedDays} days
+                                                Days uncompleted:             {stats.uncompletedDays} days
                                             </Text>
                                         </View>
                                     </View>
@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
     daysContainer: {
         gap: 10,
         marginBottom: 20,
+        marginHorizontal: wp(1),
     },
     daysCompleted: {
         backgroundColor: 'rgba(2, 178, 9, 1)',
