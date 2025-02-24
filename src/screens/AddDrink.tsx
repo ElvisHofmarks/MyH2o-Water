@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { act, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import ImagePath from '../assets/ImagePath';
@@ -6,6 +6,8 @@ import { COLORS, FONTS } from '../config/Constants';
 import { getExtraWaterPerStep } from '../services/BeverageCalculator';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { addDrink } from '../redux/userSlice';
+import Purchases from 'react-native-purchases';
+import RevenueCatUI from 'react-native-purchases-ui';
 
 
 
@@ -27,6 +29,35 @@ export default function AddDrink() {
   const [volume, setVolume] = useState(50);
   const [extraWater, setExtraWater] = useState(0);
   const [isPremium, setIsPremium] = useState(false);
+
+  const [activeSubscription, setActiveSubscription] = useState(false);
+
+  useEffect(() => {
+    const getCurrentActiveSubscriptions = async () => {
+      try {
+        const { activeSubscriptions } = await Purchases.getCustomerInfo();
+        if (activeSubscriptions.length > 0) {
+          setActiveSubscription(true);
+        } else {
+          setActiveSubscription(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getCurrentActiveSubscriptions();
+  }, []);
+
+
+  Purchases.addCustomerInfoUpdateListener((info) => {
+    setActiveSubscription(info.activeSubscriptions.length > 0 || info.nonSubscriptionTransactions.length > 0);
+});
+
+  const displayPaywall = () => {
+    RevenueCatUI.presentPaywall()
+  }
+
 
   const adjustVolume = (amount: number) => {
     const newVolume = volume + amount;
@@ -64,11 +95,11 @@ export default function AddDrink() {
         {drinkOptions.map((drink, index) => (
           <TouchableOpacity
             key={drink.id}
-            disabled={!isPremium && index > 2}
+            disabled={!activeSubscription && index > 2}
             style={[
               styles.drinkOption,
               {
-                opacity: isPremium ? 1 : index > 2 ? 0.5 : 1
+                opacity: activeSubscription ? 1 : index > 2 ? 0.5 : 1
               }
             ]}
             onPress={() => handleDrinkSelect(drink.id)}
@@ -76,9 +107,12 @@ export default function AddDrink() {
             <Image source={drink.icon} style={{ borderWidth: 3, borderColor: selectedDrink === drink.id ? "white" : 'transparent', borderRadius: wp(2.5) }} />
           </TouchableOpacity>
         ))}
-        <TouchableOpacity style={{ position: "absolute", bottom: wp(20), alignSelf: "center", left: wp(35) }}>
-          <Image source={ImagePath.lockIcon} />
-        </TouchableOpacity>
+        {!activeSubscription && (
+ <TouchableOpacity style={{ position: "absolute", bottom: wp(20), alignSelf: "center", left: wp(35) }} onPress={displayPaywall}>
+ <Image source={ImagePath.lockIcon} />
+</TouchableOpacity>
+        )}
+       
       </View>
 
       <View style={styles.volumeControl}>

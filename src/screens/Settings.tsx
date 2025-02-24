@@ -19,6 +19,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ImagePath from '../assets/ImagePath';
 import { COLORS, FONTS } from '../config/Constants';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import RevenueCatUI from 'react-native-purchases-ui';
 
 interface ProfileScreenProps {
     navigation?: any; // Add proper navigation typing based on your setup
@@ -41,6 +42,11 @@ export default function Settings({ navigation }: ProfileScreenProps) {
             setIsEditingName(false);
         }
     };
+
+    const displayPaywall = () => {
+        RevenueCatUI.presentPaywall()
+      }
+    
 
     const handleSelectImage = () => {
         ImagePicker.openPicker({
@@ -83,10 +89,10 @@ export default function Settings({ navigation }: ProfileScreenProps) {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.premiumCard}>
+            <TouchableOpacity style={styles.premiumCard} onPress={displayPaywall}>
                 <Image source={ImagePath.logo} style={{ marginTop: wp(2) }} />
                 <Text style={styles.premiumSubtext}>PREMIUM</Text>
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity

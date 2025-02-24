@@ -6,8 +6,12 @@ import {SafeAreaView, View, StyleSheet} from 'react-native';
 import {persistor, store} from './src/redux/store';
 import {COLORS} from './src/config/Constants';
 import AppNavigator from './src/navigation/AppNavigator';
+import Purchases from 'react-native-purchases';
+
 
 const AppContent: React.FC = () => {
+  Purchases.configure({ apiKey: "appl_vZovCLdWkyACWUnccxUKPekDhXg"})
+
   return (
       <View style={styles.container}>
         <NavigationContainer>
