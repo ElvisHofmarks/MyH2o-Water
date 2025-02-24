@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { COLORS, FONTS } from '../config/Constants';
@@ -20,7 +20,7 @@ const Dashboard: React.FC = () => {
   const todayStats = dailyStats.find((stat: { date: string; totalVolume: number }) => stat.date === today);
   const todayVolume = todayStats?.totalVolume || 0;
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <SafeAreaView style={styles.safeArea} />
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>My H2o today</Text>
@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
       </View>
       {drinkModalVisible && <DrinkTracker modalVisible={drinkModalVisible} setModalVisible={setDrinkModalVisible} />}
       {myDataModalVisible && <MyDataModal modalVisible={myDataModalVisible} setModalVisible={setMyDataModalVisible} />}
-    </View>
+    </ScrollView>
   );
 };
 

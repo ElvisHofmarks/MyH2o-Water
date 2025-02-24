@@ -65,16 +65,16 @@ export default CustomTab;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.primary,
-    paddingBottom: Platform.OS === 'ios' ? (Platform.constants?.systemName === "iPadOS" ? wp(2) : wp(8)) : wp(180),
+    paddingBottom: Platform.OS === 'ios' ? (Platform.constants?.systemName === "iPadOS" ? wp(2) : wp(7)) : wp(7),
   },
   mainView: {
     flexDirection: 'row',
-    marginHorizontal: wp(5),
+    marginHorizontal: wp(4),
     borderRadius: wp(5),
     backgroundColor: COLORS.white,
-    paddingVertical: wp(3),
+    paddingVertical: wp(3.2),
     justifyContent: 'space-between',
-    paddingHorizontal: wp(5),
+    paddingHorizontal: wp(8),
   },
   tabButton: {
     justifyContent: 'space-between',
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: 'center',
-    gap: wp(1),
+    gap: wp(0.2),
     justifyContent: 'center',
   },
   tabText: {

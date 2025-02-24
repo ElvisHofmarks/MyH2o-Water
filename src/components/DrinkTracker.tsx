@@ -181,7 +181,7 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#87CEEB',
+        backgroundColor: COLORS.primary, 
         padding: 0,
     },
     waterAmount: {
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     modalContent: {
-        backgroundColor: '#87CEEB',
+        backgroundColor: COLORS.primary,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,

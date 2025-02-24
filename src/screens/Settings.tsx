@@ -13,6 +13,7 @@ import {
     Alert,
     Linking,
     Image,
+    ScrollView,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImagePath from '../assets/ImagePath';
@@ -61,6 +62,7 @@ export default function Settings({ navigation }: ProfileScreenProps) {
 
     return (
         <SafeAreaView style={styles.container}>
+            <ScrollView style={{flex:1}}>
             <TouchableOpacity style={styles.avatarContainer} onPress={handleSelectImage}>
                 <View style={styles.avatar}>
                     {profile.avatar ? (
@@ -147,6 +149,7 @@ export default function Settings({ navigation }: ProfileScreenProps) {
                     </View>
                 </View>
             </Modal>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -154,7 +157,7 @@ export default function Settings({ navigation }: ProfileScreenProps) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#7CD5D8',
+        backgroundColor: COLORS.primary,
         padding: 20,
     },
     avatarContainer: {

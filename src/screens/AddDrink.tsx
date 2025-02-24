@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import ImagePath from '../assets/ImagePath';
 import { COLORS, FONTS } from '../config/Constants';
@@ -56,6 +56,7 @@ export default function AddDrink() {
   };
 
   return (
+    <ScrollView style={styles.container}>
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Add drink</Text>
 
@@ -124,6 +125,7 @@ export default function AddDrink() {
         <Text style={styles.addButtonText}>Add</Text>
       </TouchableOpacity>
     </SafeAreaView>
+    </ScrollView>
   );
 }
 
@@ -135,6 +137,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     fontFamily: FONTS.JostRegular,
   },
+  
   container: {
     flex: 1,
     backgroundColor: COLORS.primary,
