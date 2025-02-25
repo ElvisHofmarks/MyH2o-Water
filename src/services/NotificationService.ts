@@ -107,8 +107,18 @@ class NotificationService {
   }
 
   private scheduleNotification(message: string, date: Date) {
+    // Make sure the date is in the future
+    const now = new Date();
+    if (date < now) {
+      // If the time has already passed today, schedule for tomorrow
+      date.setDate(date.getDate() + 1);
+    }
+
+    console.log(`Scheduling notification for ${date.toLocaleString()} with message: ${message}`);
+    
     PushNotification.localNotificationSchedule({
       channelId: 'water-reminders',
+      title: 'MyH2o Reminder',
       message,
       date,
       allowWhileIdle: true,
@@ -124,32 +134,76 @@ class NotificationService {
     const state = this.ensureStore().getState();
     if (!state.user.settings.notifications) return;
 
-    const [hours, minutes] = time.split(':');
+    // Parse time format (e.g., "7:00 AM")
+    const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
+    const match = time.match(timeRegex);
+    
+    if (!match) {
+      console.error(`Invalid time format: ${time}`);
+      return;
+    }
+    
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    const period = match[3].toUpperCase();
+    
+    // Convert to 24-hour format
+    if (period === 'PM' && hours < 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
     const date = new Date();
-    date.setHours(parseInt(hours));
-    date.setMinutes(parseInt(minutes));
+    date.setHours(hours);
+    date.setMinutes(minutes);
     date.setSeconds(0);
-
+    
+    // We don't need to cancel all notifications here, as it would cancel other types of notifications
+    
     this.scheduleNotification(
       this.getRandomMessage('wakeup'),
       date
     );
+    
+    console.log(`Scheduled wakeup notification for ${isWeekend ? 'weekend' : 'workday'} at ${time}`);
   }
 
   public scheduleBedtimeNotification(time: string, isWeekend: boolean) {
     const state = this.ensureStore().getState();
     if (!state.user.settings.notifications) return;
 
-    const [hours, minutes] = time.split(':');
+    // Parse time format (e.g., "11:00 PM")
+    const timeRegex = /(\d+):(\d+)\s*(AM|PM)/i;
+    const match = time.match(timeRegex);
+    
+    if (!match) {
+      console.error(`Invalid time format: ${time}`);
+      return;
+    }
+    
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    const period = match[3].toUpperCase();
+    
+    // Convert to 24-hour format
+    if (period === 'PM' && hours < 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
     const date = new Date();
-    date.setHours(parseInt(hours));
-    date.setMinutes(parseInt(minutes));
+    date.setHours(hours);
+    date.setMinutes(minutes);
     date.setSeconds(0);
-
+    
     this.scheduleNotification(
       this.getRandomMessage('bedtime'),
       date
     );
+    
+    console.log(`Scheduled bedtime notification for ${isWeekend ? 'weekend' : 'workday'} at ${time}`);
   }
 
   public scheduleAfterAlcoholNotification() {
@@ -163,6 +217,8 @@ class NotificationService {
       this.getRandomMessage('afterAlcohol'),
       date
     );
+    
+    console.log(`Scheduled after-alcohol notification for ${date.toLocaleTimeString()}`);
   }
 
   public scheduleInactivityReminder() {
@@ -176,6 +232,8 @@ class NotificationService {
       this.getRandomMessage('reminder'),
       date
     );
+    
+    console.log(`Scheduled inactivity reminder for ${date.toLocaleTimeString()}`);
   }
 
   public cancelAllNotifications() {
