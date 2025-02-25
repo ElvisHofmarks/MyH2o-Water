@@ -6,11 +6,11 @@ import {SafeAreaView, View, StyleSheet} from 'react-native';
 import {persistor, store} from './src/redux/store';
 import {COLORS} from './src/config/Constants';
 import AppNavigator from './src/navigation/AppNavigator';
-import Purchases from 'react-native-purchases';
+import PushNotification from 'react-native-push-notification';
 
 
 const AppContent: React.FC = () => {
-  Purchases.configure({ apiKey: "appl_vZovCLdWkyACWUnccxUKPekDhXg"})
+ 
 
   return (
       <View style={styles.container}>
@@ -22,6 +22,8 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
+
+  //PushNotification.requestPermissions()
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

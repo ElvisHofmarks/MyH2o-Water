@@ -10,11 +10,17 @@ import SuggestionCard from '../components/SuggestionCard';
 import WaterStatistics from '../components/WaterStatistics';
 import DrinkTracker from '../components/DrinkTracker';
 import MyDataModal from '../components/MyDataModal';
+import Purchases from 'react-native-purchases';
 
+function generateRandom8DigitNumber() {
+  return Math.floor(10000000 + Math.random() * 90000000);
+}
 
 const Dashboard: React.FC = () => {
-  const { settings, dailyStats, profile } = useSelector((state: RootState) => state.user);
   const userState = useSelector((state: RootState) => state.user);
+  const userId = generateRandom8DigitNumber()
+  Purchases.configure({ apiKey: "appl_vZovCLdWkyACWUnccxUKPekDhXg", appUserID: String(userId) })
+  const { settings, dailyStats ,profile} = useSelector((state: RootState) => state.user);
   const [drinkModalVisible, setDrinkModalVisible] = useState(false);
   const [myDataModalVisible, setMyDataModalVisible] = useState(profile.age ? false : true);
   

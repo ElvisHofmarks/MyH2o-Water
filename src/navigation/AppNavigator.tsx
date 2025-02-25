@@ -30,7 +30,7 @@ const AppNavigator: React.FC = () => {
 
 function MyTabs() {
     const Tab = createBottomTabNavigator();
-  
+
     return (
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Tab.Navigator

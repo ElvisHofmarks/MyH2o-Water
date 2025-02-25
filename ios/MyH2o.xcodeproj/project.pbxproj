@@ -59,6 +59,7 @@
 		B24B9A7575F24EEF893C94D4 /* Jost-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Jost-ExtraLight.ttf"; path = "../src/assets/fonts/Jost-ExtraLight.ttf"; sourceTree = "<group>"; };
 		D7DEBFC38B194D21809779BC /* Jost-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Jost-SemiBoldItalic.ttf"; path = "../src/assets/fonts/Jost-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		D88ABDFBB7BC4043825D89F1 /* Jost-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Jost-Light.ttf"; path = "../src/assets/fonts/Jost-Light.ttf"; sourceTree = "<group>"; };
+		DD233E662D6D06B90021F8B1 /* MyH2o.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MyH2o.entitlements; path = MyH2o/MyH2o.entitlements; sourceTree = "<group>"; };
 		DD6328DB2D6CB0E400263CA5 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED505D20C5AD4613BB42D909 /* Jost-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Jost-Black.ttf"; path = "../src/assets/fonts/Jost-Black.ttf"; sourceTree = "<group>"; };
@@ -81,6 +82,7 @@
 		13B07FAE1A68108700A75B9A /* MyH2o */ = {
 			isa = PBXGroup;
 			children = (
+				DD233E662D6D06B90021F8B1 /* MyH2o.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -343,7 +345,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = MyH2o/MyH2o.entitlements;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = WF4NSMDSAU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = MyH2o/Info.plist;
@@ -372,7 +375,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = MyH2o/MyH2o.entitlements;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = WF4NSMDSAU;
 				INFOPLIST_FILE = MyH2o/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -462,10 +466,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -534,10 +535,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
