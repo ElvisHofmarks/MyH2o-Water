@@ -18,6 +18,22 @@ interface DrinkSummary {
     amount: number;
 }
 
+// Generate dynamic scale labels based on the maximum amount
+const generateScaleLabels = (maxAmount: number): number[] => {
+    // Round up to the nearest 0.25L
+    const roundedMax = Math.ceil(maxAmount * 4) / 4;
+    
+    // Create 8 evenly spaced labels
+    const step = roundedMax / 8;
+    const labels = [];
+    
+    for (let i = 1; i <= 8; i++) {
+        labels.push(step * i);
+    }
+    
+    return labels;
+};
+
 const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
     const [selectedPeriod, setSelectedPeriod] = useState<'Today' | 'Week' | 'Month'>('Today');
     const { drinkHistory, settings, dailyStats } = useSelector((state: RootState) => state.user);
@@ -84,12 +100,27 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
         };
     }, [filteredData, settings.dailyGoal, dailyStats, selectedPeriod]);
 
+    // Calculate the maximum amount for visualization
+    const maxDrinkAmount = useMemo(() => {
+        const maxAmount = Math.max(
+            ...drinkSummary.map(drink => drink.amount),
+            stats.targetAmount * 1000 // Convert L to mL
+        );
+        
+        // Convert to L and ensure minimum of 2L
+        return Math.max(maxAmount / 1000, 2);
+    }, [drinkSummary, stats.targetAmount]);
+
+    // Generate scale labels
+    const scaleLabels = useMemo(() => {
+        return generateScaleLabels(maxDrinkAmount);
+    }, [maxDrinkAmount]);
+
     const renderProgressBar = (amount: number, maxAmount: number) => {
-        const maxAmountInL = 2000; // 2L max for visualization
-        const percentage = (amount / maxAmount) * 100;
+        const percentage = (amount / (maxAmount * 1000)) * 100; // Convert maxAmount to mL
         return (
             <View style={styles.progressBarContainer}>
-                <View style={[styles.progressBar, { width: `${percentage}%` }]} />
+                <View style={[styles.progressBar, { width: `${Math.min(percentage, 100)}%` }]} />
             </View>
         );
     };
@@ -155,15 +186,15 @@ const DrinkTracker = ({ modalVisible, setModalVisible }: any) => {
                                         {drinkSummary.map((drink) => (
                                             <View key={drink.name} style={styles.drinkItem}>
                                                 <Text style={styles.drinkName}>{drink.name}</Text>
-                                                {renderProgressBar(drink.amount, 2000)}
+                                                {renderProgressBar(drink.amount, maxDrinkAmount)}
                                             </View>
                                         ))}
 
                                         {/* Volume Scale */}
                                         <View style={styles.scaleContainer}>
-                                            {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((value) => (
+                                            {scaleLabels.map((value) => (
                                                 <Text key={value} style={styles.scaleText}>
-                                                    {value}l
+                                                    {value.toFixed(2).replace(/\.?0+$/, '')}L
                                                 </Text>
                                             ))}
                                         </View>

@@ -26,12 +26,27 @@ const getLastSevenDays = () => {
     return dates;
 };
 
+// Generate dynamic y-axis labels based on the maximum value
+const generateYAxisLabels = (maxValue: number): number[] => {
+    // Round up to the nearest 0.5L
+    const roundedMax = Math.ceil(maxValue * 2) / 2;
+    
+    // Create 5 evenly spaced labels
+    const step = roundedMax / 5;
+    const labels = [];
+    
+    for (let i = 5; i > 0; i--) {
+        labels.push(step * i);
+    }
+    
+    return labels;
+};
+
 const WaterStatistics = () => {
     const userState = useSelector((state: RootState) => state.user);
     const { dailyStats } = userState;
     const hydrationData = getHydrationRecommendations(userState);
     const adjustedDailyGoal = hydrationData.dailyGoal;
-    const maxValue = Math.max(adjustedDailyGoal / 1000, 5); // Convert to L, minimum 5L for scale
     
     const data: DayData[] = getLastSevenDays().map(date => {
         const stats = dailyStats.find((stat: { date: string }) => stat.date === date);
@@ -41,6 +56,10 @@ const WaterStatistics = () => {
         };
     });
 
+    // Calculate max value based on daily goal and actual consumption
+    const maxConsumption = Math.max(...data.map(item => item.amount), 0);
+    const maxValue = Math.max(adjustedDailyGoal / 1000, maxConsumption, 2.5); // At least 2.5L for scale
+
     return (
         <View style={styles.card}>
             <Text style={styles.goalText}>Daily goal {(adjustedDailyGoal / 1000).toFixed(1)}L</Text>
@@ -48,7 +67,7 @@ const WaterStatistics = () => {
             <View style={styles.chartContainer}>
                 {/* Y-axis labels */}
                 <View style={styles.yAxis}>
-                    {[2.5, 2.0, 1.5, 1.0, 0.5].map((value) => (
+                    {generateYAxisLabels(maxValue).map((value) => (
                         <Text key={value} style={styles.yAxisLabel}>
                             {value.toFixed(1)}L
                         </Text>
