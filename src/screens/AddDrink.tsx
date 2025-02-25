@@ -147,16 +147,12 @@ export default function AddDrink() {
             const extraWater = selectedDrinkData?.name !== 'Water' ? 
               (volume / 50) * getExtraWaterPerStep(selectedDrinkData?.name) : 0;
               
+            // Only add the drink itself, don't automatically add water
             dispatch(addDrink({
               type: selectedDrinkData?.name || '',
               volume: volume
             }));
-            if (extraWater > 0) {
-              dispatch(addDrink({
-                type: 'Water',
-                volume: extraWater
-              }));
-            }
+            // The extra water needed will be calculated in userSlice and added to daily goal
             setSelectedDrink(null);
             setVolume(50);
           }

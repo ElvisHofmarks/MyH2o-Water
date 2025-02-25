@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { getHydrationRecommendations } from '../redux/userSlice';
 import { COLORS, FONTS } from '../config/Constants';
 import ImagePath from '../assets/ImagePath';
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -12,13 +13,17 @@ import MyDataModal from '../components/MyDataModal';
 
 
 const Dashboard: React.FC = () => {
-  const { settings, dailyStats ,profile} = useSelector((state: RootState) => state.user);
+  const { settings, dailyStats, profile } = useSelector((state: RootState) => state.user);
+  const userState = useSelector((state: RootState) => state.user);
   const [drinkModalVisible, setDrinkModalVisible] = useState(false);
   const [myDataModalVisible, setMyDataModalVisible] = useState(profile.age ? false : true);
-  // Get today's stats
-  const today = new Date().toISOString().split('T')[0];
-  const todayStats = dailyStats.find((stat: { date: string; totalVolume: number }) => stat.date === today);
-  const todayVolume = todayStats?.totalVolume || 0;
+  
+  // Get hydration recommendations including adjusted daily goal
+  const hydrationData = getHydrationRecommendations(userState);
+  const todayVolume = hydrationData.totalDrankToday;
+  const adjustedDailyGoal = hydrationData.dailyGoal;
+  const baseGoal = hydrationData.baseGoal;
+  const extraWaterNeeded = hydrationData.extraWaterNeeded;
   return (
     <ScrollView style={styles.container}>
       <SafeAreaView style={styles.safeArea} />
@@ -27,13 +32,15 @@ const Dashboard: React.FC = () => {
         <View style={styles.rowContainer}>
           <View style={styles.columnContainer}>
             <Text style={styles.averageText}>From average daily amount*</Text>
-            <Text style={styles.averageNote}>*{(settings.dailyGoal / 1000).toFixed(1)}L calculated by your data</Text>
+            <Text style={styles.averageNote}>
+              *{(baseGoal / 1000).toFixed(1)}L base + {extraWaterNeeded > 0 ? `${(extraWaterNeeded / 1000).toFixed(1)}L extra = ${(adjustedDailyGoal / 1000).toFixed(1)}L` : '0L extra'}
+            </Text>
           </View>
           <View>
             <Image source={ImagePath.containerIcon} />
             <View style={{ position: "absolute", top: wp(14), right: wp(6) }}>
               <Text style={styles.percentageText}>
-                {Math.min(Math.round((todayVolume / settings.dailyGoal) * 100), 100)}%
+                {Math.min(Math.round((todayVolume / adjustedDailyGoal) * 100), 100)}%
               </Text>
             </View>
           </View>

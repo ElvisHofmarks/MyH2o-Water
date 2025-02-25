@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { FONTS } from '../config/Constants';
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { RootState } from '../redux/store';
+import { getHydrationRecommendations } from '../redux/userSlice';
 
 type DayData = {
     day: string;
@@ -26,8 +27,11 @@ const getLastSevenDays = () => {
 };
 
 const WaterStatistics = () => {
-    const { dailyStats, settings } = useSelector((state: RootState) => state.user);
-    const maxValue = Math.max(settings.dailyGoal / 1000, 5); // Convert to L, minimum 5L for scale
+    const userState = useSelector((state: RootState) => state.user);
+    const { dailyStats } = userState;
+    const hydrationData = getHydrationRecommendations(userState);
+    const adjustedDailyGoal = hydrationData.dailyGoal;
+    const maxValue = Math.max(adjustedDailyGoal / 1000, 5); // Convert to L, minimum 5L for scale
     
     const data: DayData[] = getLastSevenDays().map(date => {
         const stats = dailyStats.find((stat: { date: string }) => stat.date === date);
@@ -39,7 +43,7 @@ const WaterStatistics = () => {
 
     return (
         <View style={styles.card}>
-            <Text style={styles.goalText}>Daily goal {settings.dailyGoal / 1000}L</Text>
+            <Text style={styles.goalText}>Daily goal {(adjustedDailyGoal / 1000).toFixed(1)}L</Text>
 
             <View style={styles.chartContainer}>
                 {/* Y-axis labels */}

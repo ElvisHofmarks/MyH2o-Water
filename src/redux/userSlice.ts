@@ -188,17 +188,30 @@ export const { updateOnBoarding, updateSettings, addDrink, clearHistory, updateP
 export default userSlice.reducer;
 
 export const getHydrationRecommendations = (state: UserState) => {
-  const dailyGoal = state.settings.dailyGoal;
-  const totalDrankToday = state.dailyStats[state.dailyStats.length - 1]?.totalVolume || 0;
-  const extraWaterNeeded = state.drinkHistory
+  // Get the base daily goal
+  const baseGoal = state.settings.dailyGoal;
+  
+  // Get today's date
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Calculate extra water needed from today's non-water drinks
+  const todayStats = state.dailyStats.find(stat => stat.date === today);
+  const extraWaterNeeded = todayStats?.drinks
     .filter(drink => drink.type !== 'Water')
-    .reduce((total, drink) => total + (drink.extraWaterNeeded || 0), 0);
-
+    .reduce((total, drink) => total + (drink.extraWaterNeeded || 0), 0) || 0;
+  
+  // Calculate total water consumed today
+  const totalDrankToday = todayStats?.totalVolume || 0;
+  
+  // Adjusted daily goal includes the extra water needed from non-water drinks
+  const adjustedDailyGoal = baseGoal + extraWaterNeeded;
+  
   return {
-    dailyGoal,
+    dailyGoal: adjustedDailyGoal, // Adjusted goal including extra water needed
+    baseGoal, // Original goal without adjustments
     totalDrankToday,
     extraWaterNeeded,
-    remainingToGoal: dailyGoal - totalDrankToday,
+    remainingToGoal: adjustedDailyGoal - totalDrankToday,
     recommendedAdditionalWater: extraWaterNeeded
   };
 };
